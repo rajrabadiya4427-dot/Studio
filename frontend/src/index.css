@@ -1,11 +1,7 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-#games {
-    background-image: url('./assets/images/game-bg.avif');
-    background-repeat: no-repeat;
-    background-size: cover;
-}
+
 
 
 html,body {
