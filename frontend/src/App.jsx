@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react'
 import Home from './pages/Home'
 import Loader from './components/Loader'
-import bgAudio from './assets/video/bg-video.mp4'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Contact from './pages/Contact'
@@ -20,7 +19,6 @@ const App = () => {
 
   const [entered, setEntered] = useState(false)
   const [showEnter, setShowEnter] = useState(false);
-  const [isAudioOn, setisAudioOn] = useState(false);
   const { authUser, isCheckingAuth, checkAuth } = useAuthStore();
 
 
@@ -28,18 +26,14 @@ const App = () => {
     checkAuth();
   }, [checkAuth])
 
-  const videoRef = useRef(null)
-  const audioRef = useRef(new Audio(bgAudio))
+
 
   // If user logs out, reset the Loader splash screen so they see it again next time
   useEffect(() => {
     if (!authUser) {
       setEntered(false);
       setShowEnter(false);
-      setisAudioOn(false);
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
+     
     }
   }, [authUser]);
 
@@ -67,18 +61,14 @@ const App = () => {
               showEnter={showEnter}
               setShowEnter={setShowEnter}
               setEntered={setEntered}
-              videoRef={videoRef}
-              audioRef={audioRef}
-              setisAudioOn={setisAudioOn}
+            
             />
           )}
 
           {entered && (
             <>
               <Navbar
-                audioRef={audioRef}
-                isAudioOn={isAudioOn}
-                setisAudioOn={setisAudioOn}
+              
               />
               <Routes>
                 <Route path="/" element={<Home />} />

@@ -1,5 +1,4 @@
-import Hero from '@/components/contact/Hero'
-import React from 'react'
+import Hero from '../components/contact/Hero'
 
 const Contact = () => {
   return (
