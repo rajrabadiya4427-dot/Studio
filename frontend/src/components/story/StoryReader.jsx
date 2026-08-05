@@ -104,6 +104,27 @@ const StoryReader = ({ storyText, title, makerName }) => {
         setPages(newPages);
     }, [storyText, dimensions.isMobile]);
 
+    // Override the flip function to completely disable click-to-flip, enforcing drag-only
+    useEffect(() => {
+        if (pages.length > 0) {
+            const timer = setTimeout(() => {
+                if (bookRef.current) {
+                    try {
+                        const pageFlipInstance = bookRef.current.pageFlip();
+                        if (pageFlipInstance && pageFlipInstance.flipController) {
+                            pageFlipInstance.flipController.flip = () => {
+                                // Do nothing on click
+                            };
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }
+            }, 500);
+            return () => clearTimeout(timer);
+        }
+    }, [pages]);
+
     if (!storyText || pages.length === 0) return null;
 
     return (
