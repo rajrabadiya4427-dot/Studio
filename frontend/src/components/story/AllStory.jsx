@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { useProductStore } from '../../store/useProductStore';
 import ProductCard from '../ProductCard';
 import PublishModal from '../PublishModal';
+import DemoBook from './DemoBook';
 
 const AllStory = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -63,6 +64,9 @@ const AllStory = () => {
                             <span>Publish Story</span>
                         </button>
                     </div>
+
+                    {/* Interactive Demo Book */}
+                    <DemoBook />
 
                     {/* Story Grid */}
                     {isLoading ? (
