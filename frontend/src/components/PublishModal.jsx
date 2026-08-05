@@ -20,6 +20,7 @@ const PublishModal = ({ isOpen, onClose, defaultType = "game", onPublished }) =>
         isFree: true,
         price: 0,
         rating: 5,
+        content: "",
     });
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
@@ -55,6 +56,12 @@ const PublishModal = ({ isOpen, onClose, defaultType = "game", onPublished }) =>
             );
             return;
         }
+        if (form.type === "story" && !form.content.trim()) {
+            import("react-hot-toast").then(({ default: toast }) =>
+                toast.error("Please enter the story content")
+            );
+            return;
+        }
 
         const formData = new FormData();
         formData.append("title", form.title);
@@ -64,6 +71,9 @@ const PublishModal = ({ isOpen, onClose, defaultType = "game", onPublished }) =>
         formData.append("price", form.isFree ? 0 : form.price);
         formData.append("rating", form.rating);
         formData.append("image", imageFile);
+        if (form.type === "story") {
+            formData.append("content", form.content);
+        }
 
         const result = await addProduct(formData);
         if (result.success) {
@@ -80,6 +90,7 @@ const PublishModal = ({ isOpen, onClose, defaultType = "game", onPublished }) =>
             isFree: true,
             price: 0,
             rating: 5,
+            content: "",
         });
         setImageFile(null);
         setImagePreview(null);
@@ -179,6 +190,23 @@ const PublishModal = ({ isOpen, onClose, defaultType = "game", onPublished }) =>
                             required
                         />
                     </div>
+
+                    {/* Story Content (Only for Story type) */}
+                    {form.type === "story" && (
+                        <div className="publish-field">
+                            <label className="publish-label">
+                                <BookText size={14} /> Story Content
+                            </label>
+                            <textarea
+                                className="publish-input"
+                                placeholder="Paste or type your story here..."
+                                value={form.content}
+                                onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
+                                rows={8}
+                                required
+                            />
+                        </div>
+                    )}
 
                     {/* Maker Name */}
                     <div className="publish-field">

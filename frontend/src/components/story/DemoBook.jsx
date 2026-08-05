@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import HTMLFlipBook from 'react-pageflip';
 import { BookOpen } from 'lucide-react';
 
@@ -48,9 +48,38 @@ const Page = React.forwardRef((props, ref) => {
 });
 
 const DemoBook = () => {
+    const [dimensions, setDimensions] = useState({
+        width: 400,
+        height: 550,
+        isMobile: false
+    });
+
+    useEffect(() => {
+        const handleResize = () => {
+            const width = window.innerWidth;
+            if (width < 768) {
+                setDimensions({
+                    width: width,
+                    height: window.innerHeight - 150,
+                    isMobile: true
+                });
+            } else {
+                setDimensions({
+                    width: 400,
+                    height: 550,
+                    isMobile: false
+                });
+            }
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     return (
         <div className="flex flex-col items-center justify-center w-full py-20 bg-black border-b border-gray-800">
-            <div className="mb-12 text-center z-10 relative">
+            <div className="mb-12 text-center z-10 relative px-4">
                 <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 mb-4 flex items-center justify-center gap-3">
                     <BookOpen size={36} className="text-yellow-500"/>
                     Interactive Demo Story
@@ -58,19 +87,20 @@ const DemoBook = () => {
                 <p className="text-gray-400 max-w-lg mx-auto text-lg">Experience our realistic reading engine. Flip the pages to read the legend of RStudio.</p>
             </div>
             
-            <div className="book-container shadow-[0_0_50px_rgba(234,179,8,0.15)] rounded-lg p-2 bg-[#1a1a1a] relative z-10">
+            <div className={`book-container shadow-[0_0_50px_rgba(234,179,8,0.15)] rounded-lg ${dimensions.isMobile ? 'p-0 w-full flex justify-center' : 'p-2'} bg-[#1a1a1a] relative z-10`}>
                 <HTMLFlipBook 
-                    width={400} 
-                    height={550} 
-                    size="stretch"
+                    width={dimensions.width} 
+                    height={dimensions.height} 
+                    size={dimensions.isMobile ? "fixed" : "stretch"}
                     minWidth={315}
-                    maxWidth={450}
+                    maxWidth={dimensions.isMobile ? window.innerWidth : 450}
                     minHeight={420}
-                    maxHeight={600}
+                    maxHeight={dimensions.isMobile ? window.innerHeight : 600}
                     maxShadowOpacity={0.5}
                     showCover={true}
                     mobileScrollSupport={true}
-                    className="demo-book"
+                    useMouseEvents={true}
+                    className="demo-book mx-auto"
                 >
                     {/* Cover Page */}
                     <div className="demo-page-cover bg-gradient-to-br from-[#4a2e1b] to-[#1f1209] text-white p-8 flex flex-col items-center justify-center rounded-r-md shadow-2xl relative overflow-hidden">

@@ -1,8 +1,9 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useProductStore } from "../store/useProductStore";
 import { useAuthStore } from "../store/useAuthstore";
 import { ArrowLeft, Lock, Unlock, Send, Gamepad2, BookOpen, BookText, MessageSquare, StarIcon } from "lucide-react";
+import StoryReader from "../components/story/StoryReader";
 
 const TYPE_META = {
     game: { label: "Game", icon: null, color: "#00ff87" },
@@ -102,6 +103,16 @@ const ProductDetails = () => {
                             </div>
                         </div>
                     </div>
+
+                    {currentProduct.type === "story" && currentProduct.content && (
+                        <div className="pd-story-reader-section mt-12 w-full">
+                            <StoryReader 
+                                storyText={currentProduct.content} 
+                                title={currentProduct.title} 
+                                makerName={currentProduct.makerName} 
+                            />
+                        </div>
+                    )}
 
                     <div className="pd-comments-section">
                         <h2 className="pd-comments-title">

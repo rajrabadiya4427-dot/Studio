@@ -10,7 +10,8 @@ export const addProduct = async (req, res) => {
             makerName,
             rating,
             isFree,
-            price
+            price,
+            content
         } = req.body;
 
         const product = await ProductModel.create({
@@ -21,6 +22,7 @@ export const addProduct = async (req, res) => {
             rating,
             isFree,
             price,
+            content,
 
             image: req.file.path,
 
