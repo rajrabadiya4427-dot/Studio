@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import HTMLFlipBook from 'react-pageflip';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Bookmark, BookmarkCheck } from 'lucide-react';
 
 const storyContent = [
     { title: "The Hidden Studio", text: "In a world where imagination takes physical form, there was a hidden place known only as RStudio. It wasn't just a place to build software; it was a forge for dreams." },
@@ -48,6 +48,23 @@ const Page = React.forwardRef((props, ref) => {
 });
 
 const DemoBook = () => {
+    const bookRef = useRef(null);
+    const [bookmarkedPage, setBookmarkedPage] = useState(() => {
+        const saved = localStorage.getItem('demoBookBookmark');
+        return saved ? parseInt(saved, 10) : 0;
+    });
+    const [showBookmarkMsg, setShowBookmarkMsg] = useState(false);
+
+    const handleBookmark = () => {
+        if (bookRef.current) {
+            const pageIndex = bookRef.current.pageFlip().getCurrentPageIndex();
+            localStorage.setItem('demoBookBookmark', pageIndex.toString());
+            setBookmarkedPage(pageIndex);
+            setShowBookmarkMsg(true);
+            setTimeout(() => setShowBookmarkMsg(false), 2000);
+        }
+    };
+
     const [dimensions, setDimensions] = useState({
         width: 400,
         height: 550,
@@ -79,16 +96,24 @@ const DemoBook = () => {
 
     return (
         <div className="flex flex-col items-center justify-center w-full py-20 bg-black border-b border-gray-800">
-            <div className="mb-12 text-center z-10 relative px-4">
+            <div className="mb-12 text-center z-10 relative px-4 flex flex-col items-center">
                 <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 mb-4 flex items-center justify-center gap-3">
                     <BookOpen size={36} className="text-yellow-500"/>
                     Interactive Demo Story
                 </h2>
-                <p className="text-gray-400 max-w-lg mx-auto text-lg">Experience our realistic reading engine. Flip the pages to read the legend of RStudio.</p>
+                <p className="text-gray-400 max-w-lg mx-auto text-lg mb-6">Experience our realistic reading engine. Flip the pages to read the legend of RStudio.</p>
+                <button 
+                    onClick={handleBookmark}
+                    className="flex items-center gap-2 bg-[#2a2a2a] hover:bg-[#3a3a3a] text-yellow-500 px-5 py-2.5 rounded-full transition-all duration-300 border border-yellow-500/30 shadow-[0_0_15px_rgba(234,179,8,0.15)] hover:shadow-[0_0_25px_rgba(234,179,8,0.3)] hover:-translate-y-1"
+                >
+                    {showBookmarkMsg ? <BookmarkCheck size={20} /> : <Bookmark size={20} />}
+                    {showBookmarkMsg ? "Page Bookmarked!" : "Bookmark Current Page"}
+                </button>
             </div>
             
             <div className={`book-container shadow-[0_0_50px_rgba(234,179,8,0.15)] rounded-lg ${dimensions.isMobile ? 'p-0 w-full flex justify-center' : 'p-2'} bg-[#1a1a1a] relative z-10`}>
                 <HTMLFlipBook 
+                    ref={bookRef}
                     width={dimensions.width} 
                     height={dimensions.height} 
                     size={dimensions.isMobile ? "fixed" : "stretch"}
@@ -100,6 +125,8 @@ const DemoBook = () => {
                     showCover={true}
                     mobileScrollSupport={true}
                     useMouseEvents={true}
+                    disableFlipByClick={true}
+                    startPage={bookmarkedPage}
                     className="demo-book mx-auto"
                 >
                     {/* Cover Page */}
@@ -140,7 +167,7 @@ const DemoBook = () => {
             </div>
             
             <div className="mt-12 text-sm text-yellow-500/70 uppercase tracking-widest font-semibold animate-pulse flex items-center gap-2">
-                <span>&#8592;</span> Click or drag the corners to turn pages <span>&#8594;</span>
+                <span>&#8592;</span> Drag the corners to turn pages <span>&#8594;</span>
             </div>
         </div>
     );

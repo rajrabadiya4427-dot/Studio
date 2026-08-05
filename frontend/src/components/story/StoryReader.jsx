@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import HTMLFlipBook from 'react-pageflip';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Bookmark, BookmarkCheck } from 'lucide-react';
 
 const Page = React.forwardRef((props, ref) => {
     return (
@@ -22,6 +22,23 @@ const Page = React.forwardRef((props, ref) => {
 });
 
 const StoryReader = ({ storyText, title, makerName }) => {
+    const bookRef = useRef(null);
+    const [bookmarkedPage, setBookmarkedPage] = useState(() => {
+        const saved = localStorage.getItem(`storyBookmark_${title}`);
+        return saved ? parseInt(saved, 10) : 0;
+    });
+    const [showBookmarkMsg, setShowBookmarkMsg] = useState(false);
+
+    const handleBookmark = () => {
+        if (bookRef.current) {
+            const pageIndex = bookRef.current.pageFlip().getCurrentPageIndex();
+            localStorage.setItem(`storyBookmark_${title}`, pageIndex.toString());
+            setBookmarkedPage(pageIndex);
+            setShowBookmarkMsg(true);
+            setTimeout(() => setShowBookmarkMsg(false), 2000);
+        }
+    };
+
     const [pages, setPages] = useState([]);
     const [dimensions, setDimensions] = useState({
         width: 400,
@@ -90,9 +107,19 @@ const StoryReader = ({ storyText, title, makerName }) => {
     if (!storyText || pages.length === 0) return null;
 
     return (
-        <div className="flex flex-col items-center justify-center w-full py-8 md:py-10 bg-black">
+        <div className="flex flex-col items-center justify-center w-full py-8 md:py-10 bg-black relative">
+            <div className="mb-6 z-20">
+                <button 
+                    onClick={handleBookmark}
+                    className="flex items-center gap-2 bg-[#2a2a2a] hover:bg-[#3a3a3a] text-yellow-500 px-5 py-2.5 rounded-full transition-all duration-300 border border-yellow-500/30 shadow-[0_0_15px_rgba(234,179,8,0.15)] hover:shadow-[0_0_25px_rgba(234,179,8,0.3)] hover:-translate-y-1 text-sm font-medium"
+                >
+                    {showBookmarkMsg ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
+                    {showBookmarkMsg ? "Page Bookmarked!" : "Bookmark Current Page"}
+                </button>
+            </div>
             <div className={`book-container shadow-[0_0_50px_rgba(234,179,8,0.15)] rounded-lg ${dimensions.isMobile ? 'p-0 w-full flex justify-center' : 'p-2'} bg-[#1a1a1a] relative z-10`}>
                 <HTMLFlipBook 
+                    ref={bookRef}
                     width={dimensions.width} 
                     height={dimensions.height} 
                     size={dimensions.isMobile ? "fixed" : "stretch"}
@@ -104,6 +131,8 @@ const StoryReader = ({ storyText, title, makerName }) => {
                     showCover={true}
                     mobileScrollSupport={true}
                     useMouseEvents={true}
+                    disableFlipByClick={true}
+                    startPage={bookmarkedPage}
                     className="demo-book"
                 >
                     {/* Cover Page */}
@@ -139,7 +168,7 @@ const StoryReader = ({ storyText, title, makerName }) => {
             </div>
             
             <div className="mt-8 text-xs md:text-sm text-yellow-500/70 uppercase tracking-widest font-semibold animate-pulse flex items-center gap-2">
-                <span>&#8592;</span> Swipe or click corners to turn pages <span>&#8594;</span>
+                <span>&#8592;</span> Swipe or drag corners to turn pages <span>&#8594;</span>
             </div>
         </div>
     );
