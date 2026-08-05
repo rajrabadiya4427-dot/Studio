@@ -94,6 +94,25 @@ const DemoBook = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    // Override the flip function to completely disable click-to-flip, enforcing drag-only
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (bookRef.current) {
+                try {
+                    const pageFlipInstance = bookRef.current.pageFlip();
+                    if (pageFlipInstance && pageFlipInstance.flipController) {
+                        pageFlipInstance.flipController.flip = () => {
+                            // Do nothing on click
+                        };
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+        }, 500);
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
         <div className="flex flex-col items-center justify-center w-full py-20 bg-black border-b border-gray-800">
             <div className="mb-12 text-center z-10 relative px-4 flex flex-col items-center">
