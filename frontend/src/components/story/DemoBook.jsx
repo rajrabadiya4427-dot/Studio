@@ -27,7 +27,7 @@ const storyContent = [
 
 const Page = React.forwardRef((props, ref) => {
     return (
-        <div className="demo-page bg-[#f4e4bc] text-gray-900 p-8 shadow-inner relative overflow-hidden" ref={ref}>
+        <div className="demo-page bg-[#f4e4bc] text-gray-900 p-8 shadow-inner relative overflow-hidden select-none" ref={ref}>
             <div className="page-content h-full flex flex-col justify-between border-2 border-dashed border-[#d4b48c] p-6 rounded-sm">
                 <div className="page-header text-center mb-6 border-b border-[#d4b48c] pb-4">
                     <h2 className="text-xl font-bold font-serif text-[#5c4033]">{props.title}</h2>

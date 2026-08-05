@@ -4,7 +4,7 @@ import { BookOpen, Bookmark, BookmarkCheck } from 'lucide-react';
 
 const Page = React.forwardRef((props, ref) => {
     return (
-        <div className="demo-page bg-[#f4e4bc] text-gray-900 p-4 md:p-8 shadow-inner relative overflow-hidden" ref={ref}>
+        <div className="demo-page bg-[#f4e4bc] text-gray-900 p-4 md:p-8 shadow-inner relative overflow-hidden select-none" ref={ref}>
             <div className="page-content h-full flex flex-col justify-between border-2 border-dashed border-[#d4b48c] p-4 md:p-6 rounded-sm">
                 <div className="page-text flex-grow flex items-start justify-start pt-2 md:pt-4">
                     <p className="text-base md:text-lg leading-relaxed font-serif text-left text-[#4a3b32] whitespace-pre-wrap">
@@ -119,6 +119,7 @@ const StoryReader = ({ storyText, title, makerName }) => {
             </div>
             <div className={`book-container shadow-[0_0_50px_rgba(234,179,8,0.15)] rounded-lg ${dimensions.isMobile ? 'p-0 w-full flex justify-center' : 'p-2'} bg-[#1a1a1a] relative z-10`}>
                 <HTMLFlipBook 
+                    key={title}
                     ref={bookRef}
                     width={dimensions.width} 
                     height={dimensions.height} 
